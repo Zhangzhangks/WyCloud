@@ -12,5 +12,9 @@ export default {
   alias: {
     '@': path.join(__dirname, './src')
   },
-  server: { hmr: true }
+  server: {
+    port: 8006, open: true,
+    host: true
+
+  }
 };

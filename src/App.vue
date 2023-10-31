@@ -1,12 +1,13 @@
 <template>
   <router-view></router-view>
-  <itemBottom></itemBottom>
+  <itemBottom ref="bottmRef"></itemBottom>
 </template>
 <script setup>
 import { ref, reactive } from "vue";
-import itemBottom from "./components/Item/itemBottom.vue";
-
-
+import itemBottom from './components/item/itemBottom.vue'
+import { useAlertsStore } from '../src/Store/itemList'
+import { storeToRefs } from "pinia";
+const { bottmRef } = storeToRefs(useAlertsStore())
 </script>
 
 <style lang="less" scoped>

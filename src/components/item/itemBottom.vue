@@ -8,37 +8,81 @@
             </div>
         </div>
         <div class="footerRight">
-            <svg class="icon liebiao" aria-hidden="true" @click="play" v-if="isbtnShow">
+            <svg class="icon liebiao" aria-hidden="true" @click="playAudio" v-if="isBofang">
                 <use xlink:href="#icon-bofanganniu"></use>
             </svg>
-            <svg class="icon liebiao" aria-hidden="true" @click="play" v-else>
+            <svg class="icon liebiao" aria-hidden="true" @click="playAudio" v-else>
                 <use xlink:href="#icon-weibiaoti--"></use>
             </svg>
             <svg class="icon liebiao" aria-hidden="true">
                 <use xlink:href="#icon-zu"></use>
             </svg>
         </div>
-        <audio :src="`https://music.163.com/song/media/outer/url?id=${Musciid}.mp3`" ref="audio"></audio>
+        <audio :src="`https://music.163.com/song/media/outer/url?id=${Musciid}.mp3`" ref="audioRef"></audio>
     </div>
+
+    <!-- 右侧弹出 -->
+    <van-popup v-model:show="detailShow" position="right" :style="{ height: '100%', width: '100%' }">
+        <MusciDetail :musicList="playList[playListIndex]" :play="playAudio" :isBofang="isBofang" />
+    </van-popup>
 </template>
-<script setup >
-import { ref, reactive, toRefs } from 'vue'
-import { useAlertsStore } from '../../Store/itemList'
-import { storeToRefs } from 'pinia'
-const { playList, Musciid, playListIndex, isbtnShow } = storeToRefs(useAlertsStore());
+<script setup>
+import { ref, reactive, onMounted, toRefs, watch, watchEffect } from "vue";
+import { useAlertsStore } from "../../Store/itemList";
+import { storeToRefs } from "pinia";
+import MusciDetail from './MusciDetail.vue'
+const { playList, Musciid, playListIndex, isBofang, detailShow, lyricList } = storeToRefs(
+    useAlertsStore()
+);
+const { getGeCiValue } = useAlertsStore();
+
 // console.log(playList.value[playListIndex.value]);
-const audio = ref('')
-const play = function () {
-    isbtnShow.value = !isbtnShow.value;
-    console.log(isbtnShow.value);
-    if (isbtnShow.value) { return audio.value.play() } else { audio.value.pause() }
+const audioRef = ref("");
+const playAudio = function () {
+    isBofang.value = !isBofang.value;
+    if (!isBofang.value) {
+        audioRef.value.play();
+    } else {
+        audioRef.value.pause();
+    }
+
+};
+const updateDetailShow = function () {
+    detailShow.value = !detailShow.value
 }
+const autoPlay = () => {
+    // audio.value.play();
+
+};
+// 监听索引变化自动播放
+watch(
+    [playListIndex, playList],
+    ([pre, list], [newvalue, old]) => {
+        audioRef.value.autoplay = true;
+        if (audioRef.value.pause) {
+
+            isBofang.value = false;
+        }
+
+        if (list.length > old.length) {
+            if (isBofang.value) {
+                isBofang.value = true
+            }
+        }
+        if (Musciid.value) {
+            getGeCiValue(Musciid.value);
+        }
+    }
 
 
+);
+watchEffect(() => {
+
+})
+defineExpose({ autoPlay });
 </script>
 
-
-<style lang='less' scoped>
+<style lang="less" scoped>
 .FooterMusic {
     width: 100%;
     height: 1.4rem;
@@ -81,6 +125,5 @@ const play = function () {
             height: 0.6rem;
         }
     }
-
 }
 </style>

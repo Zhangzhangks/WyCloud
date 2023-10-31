@@ -1,20 +1,33 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
-
+import { onMounted, ref } from 'vue'
+import { getGeci } from '../components/Api/swiper'
 export const useAlertsStore = defineStore('itemList', () => {
     const playList = ref([{
         al:
         {
-            id: 19078,
-            name: "张国荣告别乐坛演唱会s",
-            pic: 109951164373664320,
-            picUrl: "https://p1.music.126.net/qseUH9tBtprMauNYv5jR8Q==/109951164373664324.jpg",
-            pic_str: "109951164373664324",
-        }
+            id: 3116775,
+            name: "寻",
+            pic: 2925800441997173,
+            picUrl: "https://p1.music.126.net/tgkN397ohC6XpqRRHzndLw==/2925800441997173.jpg"
 
+        },
+        id: 31445474,
+        ar: [{
+            name: "三亩地"
+        }]
     }]);
     const Musciid = ref('1919684213');
     const playListIndex = ref(0)
-    const isbtnShow = ref(true)
-    return { playList, Musciid, playListIndex, isbtnShow }
+    const isBofang = ref(true)
+    const bottmRef = ref('')
+    const detailShow = ref(false);
+    const lyricList = ref({})
+
+    // 拿取歌词
+    async function getGeCiValue(id) {
+        let data = await getGeci({ id });
+        lyricList.value = data.lrc
+    }
+
+    return { playList, lyricList, Musciid, getGeCiValue, detailShow, bottmRef, playListIndex, isBofang }
 })

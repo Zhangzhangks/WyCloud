@@ -11,5 +11,5 @@ function resize() {
 resize()
 window.onresize = function () {
     resize()
-    console.log(222);
+
 }

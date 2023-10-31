@@ -30,3 +30,8 @@ export const getMusicDetail = (id) => {
 export const getMusicDetailList = (playload) => {
     return request(`/playlist/track/all`, 'get', playload)
 }
+
+// 歌词
+export const getGeci = (playload) => {
+    return request(`/lyric`, 'get', playload)
+}

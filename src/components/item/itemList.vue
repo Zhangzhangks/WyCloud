@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="itemList">
-            <div class="item" v-for="(item, i) in musicList" :key="i">
+            <div class="item" :class="{ active: true }" v-for="(item, i) in musicList" :key="i">
                 <div class="itemLeft" @click="playMusic(i)">
                     <span class="leftSpan">{{ i + 1 }}</span>
                     <div>
@@ -41,16 +41,18 @@
 <script setup>
 import { useAlertsStore } from '../../Store/itemList'
 import { storeToRefs } from 'pinia'
-const { playList, Musciid, playListIndex } = storeToRefs(useAlertsStore())
+const { playList, Musciid, playListIndex, bottmRef } = storeToRefs(useAlertsStore())
 const props = defineProps({
     musicList: Array,
     subscribedCount: Number
 })
 const playMusic = (i) => {
-    console.log(props.musicList[i]);
+    // console.log(props.musicList[i]);
     playList.value = props.musicList
     Musciid.value = props.musicList[i].id;
-    playListIndex.value = i
+    playListIndex.value = i;
+
+
 }
 </script>
 <style lang="less" scoped>
@@ -178,5 +180,9 @@ const playMusic = (i) => {
             }
         }
     }
+}
+
+.active {
+    cursor: pointer;
 }
 </style>
