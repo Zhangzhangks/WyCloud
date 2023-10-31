@@ -3,7 +3,7 @@
         <div class="footerLeft" @click="updateDetailShow">
             <img :src="playList[playListIndex].al.picUrl" alt="" />
             <div class="author">
-                <span>{{ playList[playListIndex].al.name }}</span>
+                <span>{{ playList[playListIndex].name }}</span>
                 <span>横滑切换上下首哦</span>
             </div>
         </div>
@@ -31,7 +31,7 @@ import { ref, reactive, onMounted, toRefs, watch, watchEffect } from "vue";
 import { useAlertsStore } from "../../Store/itemList";
 import { storeToRefs } from "pinia";
 import MusciDetail from './MusciDetail.vue'
-const { playList, Musciid, playListIndex, isBofang, detailShow, lyricList } = storeToRefs(
+const { playList, Musciid, playListIndex, isBofang, detailShow, currentTime } = storeToRefs(
     useAlertsStore()
 );
 const { getGeCiValue } = useAlertsStore();
@@ -41,9 +41,12 @@ const audioRef = ref("");
 const playAudio = function () {
     isBofang.value = !isBofang.value;
     if (!isBofang.value) {
+
         audioRef.value.play();
+        updateTime()
     } else {
         audioRef.value.pause();
+        clearInterval(timer)
     }
 
 };
@@ -52,8 +55,17 @@ const updateDetailShow = function () {
 }
 const autoPlay = () => {
     // audio.value.play();
-
 };
+// 更新歌词时间
+let timer = null
+function updateTime() {
+    timer = setInterval(() => {
+        currentTime.value = audioRef.value.currentTime
+    }, 1000)
+}
+
+
+
 // 监听索引变化自动播放
 watch(
     [playListIndex, playList],
@@ -72,6 +84,7 @@ watch(
         if (Musciid.value) {
             getGeCiValue(Musciid.value);
         }
+        updateTime()
     }
 
 

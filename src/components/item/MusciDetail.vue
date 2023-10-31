@@ -18,13 +18,12 @@
             </div>
         </div>
 
-        <div class="detailTopRight" style="margin-right: 20px;">
+        <div class="detailTopRight" style="margin-right: 20px">
             <svg class="icon liebiao" aria-hidden="true">
                 <use xlink:href="#icon-fenxiang"></use>
             </svg>
         </div>
     </div>
-
 
     <!-- 中间 -->
     <div class="detailContent" v-show="!isLyricShow">
@@ -38,15 +37,14 @@
     </div>
 
     <div class="musicLyric" ref="musicLyric" v-show="isLyricShow">
-        <p v-for="item in lyric" :key="item" :class="{
-            active:
-                currentTime * 1000 >= item.time && currentTime * 1000 < item.pre,
-        }">
-            {{ item.lrc }}
-        </p>
+        <p v-for="item in lyric" :key="item"
+            :class="{ active: currentTime * 1000 >= item.time && currentTime * 1000 < item.pre }">{{
+                item.lyrics }}</p>
+
+
     </div>
 
-    <div class="detailFooter">
+    <div class=" detailFooter">
         <div class="footerTop">
             <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-aixin"></use>
@@ -95,33 +93,52 @@ import { storeToRefs } from "pinia";
 import { useAlertsStore } from "../../Store/itemList";
 import { computed, onMounted, ref } from "vue";
 
-const props = defineProps({ musicList: Object, isBofang: Boolean, play: Function });
+const props = defineProps({
+    musicList: Object,
+    isBofang: Boolean,
+    play: Function,
+});
 const router = useRouter();
 const route = useRoute();
-const { detailShow, lyricList } = storeToRefs(useAlertsStore());
+const { detailShow, lyricList, currentTime } = storeToRefs(useAlertsStore());
 
 const backHome = function () {
     detailShow.value = false;
 };
-const isLyricShow = ref(false)
+const isLyricShow = ref(false);
 
 const lyric = computed(() => {
-    let arr = null;
+    let arr = [];
+    // console.log(lyricList.value);
     if (lyricList.value.lyric) {
         arr = lyricList.value.lyric.split(/[(\r\n)\r\n]+/).map((item, i) => {
             let min = item.slice(1, 3);
             let sec = item.slice(4, 6);
             let mill = item.slice(7, 10);
+            let time = Number(parseInt(min) * 60 * 1000 + parseInt(sec) * 1000 + parseInt(mill));
             let lyrics = item.slice(11, item.length);
             if (isNaN(Number(mill))) {
-                mill = item.slice(7, 9)
+                mill = item.slice(7, 9);
+                lyrics = item.slice(10, item.length);
+                time = Number(parseInt(min) * 60 * 1000 + parseInt(sec) * 1000 + parseInt(mill));
             }
             // console.log(min, sec, mill, lyrics, '歌词');
-            return { min, sec, mill, lyrics }
-        })
-    }
-    return arr
-})
+            return { min, sec, mill, lyrics, time };
+        });
+
+        arr.forEach((item, i) => {
+
+            if (arr.length - 1 === i) {
+                item.pre = 0;
+
+            } else {
+                item.pre = arr[i + 1].time
+            }
+        });
+
+    } setInterval(() => { console.log(arr); }, 10000)
+    return arr;
+});
 
 </script>
 <style lang="less" scoped>
@@ -238,7 +255,7 @@ const lyric = computed(() => {
     overflow: scroll;
 
     p {
-        color: rgb(190, 181, 181);
+        color: rgb(58, 55, 55);
         margin-bottom: 0.3rem;
     }
 
