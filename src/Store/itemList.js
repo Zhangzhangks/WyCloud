@@ -26,18 +26,19 @@ export const useAlertsStore = defineStore('itemList', () => {
 
         }]
     }]);
-    const Musciid = ref('1919684213');
+    const Musciid = ref('');
     const playListIndex = ref(0)
     const isBofang = ref()
     const bottmRef = ref('')
-    const detailShow = ref(false);
-    const lyricList = ref({})
-    const currentTime = ref(0)
+    const detailShow = ref(false); //推荐歌曲显示
+    const lyricList = ref({}) //歌词数据
+    const currentTime = ref(0) //歌曲正在播放的时间
+    const duration = ref(0)//歌曲总时长
     // 拿取歌词
     async function getGeCiValue(id) {
         let data = await getGeci({ id });
         lyricList.value = data.lrc
     }
 
-    return { playList, lyricList, currentTime, Musciid, getGeCiValue, detailShow, bottmRef, playListIndex, isBofang }
+    return { playList, duration, lyricList, currentTime, Musciid, getGeCiValue, detailShow, bottmRef, playListIndex, isBofang }
 })

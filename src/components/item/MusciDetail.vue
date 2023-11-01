@@ -39,7 +39,7 @@
     <div class="musicLyric" ref="musicLyric" v-show="isLyricShow">
         <p v-for="item in lyric" :key="item"
             :class="{ active: currentTime * 1000 >= item.time && currentTime * 1000 < item.pre }">{{
-                item.lyrics }}</p>
+                item.lyrics }}--{{ duration }}</p>
 
 
     </div>
@@ -91,16 +91,15 @@
 import { useRouter, useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useAlertsStore } from "../../Store/itemList";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 const props = defineProps({
     musicList: Object,
     isBofang: Boolean,
     play: Function,
 });
-const router = useRouter();
-const route = useRoute();
-const { detailShow, lyricList, currentTime } = storeToRefs(useAlertsStore());
+
+const { detailShow, lyricList, currentTime, playListIndex, playList, duration } = storeToRefs(useAlertsStore());
 
 const backHome = function () {
     detailShow.value = false;
@@ -116,30 +115,45 @@ const lyric = computed(() => {
             let sec = item.slice(4, 6);
             let mill = item.slice(7, 10);
             let time = Number(parseInt(min) * 60 * 1000 + parseInt(sec) * 1000 + parseInt(mill));
-            let lyrics = item.slice(11, item.length);
+            let lyrics = item.slice(11, item.length)
             if (isNaN(Number(mill))) {
                 mill = item.slice(7, 9);
-                lyrics = item.slice(10, item.length);
+                lyrics = item.slice(10, item.length)
                 time = Number(parseInt(min) * 60 * 1000 + parseInt(sec) * 1000 + parseInt(mill));
             }
-            // console.log(min, sec, mill, lyrics, '歌词');
+            // console.log(min, sec, mill, lyrics,);
             return { min, sec, mill, lyrics, time };
         });
 
         arr.forEach((item, i) => {
-
             if (arr.length - 1 === i) {
                 item.pre = 0;
-
             } else {
                 item.pre = arr[i + 1].time
             }
         });
 
-    } setInterval(() => { console.log(arr); }, 10000)
+    }
     return arr;
 });
-
+const musicLyric = ref('')
+watch(currentTime, (newvlaue) => {
+    const p = document.querySelector('p.active');
+    if (p.offsetTop > 300) {
+        musicLyric.value.scrollTop = p.offsetTop - 300
+    }
+    if (newvlaue === duration.value) {
+        playListIndex.value++
+    }
+    if (playListIndex.value > playList.value.length - 1) {
+        playListIndex.value = 0
+    }
+})
+const goPlay = (step) => {
+    playListIndex.value += step;
+    if (playListIndex.value < 0) return playListIndex.value = playList.value.length - 1;
+    if (playListIndex.value > playList.value.length - 1) return playListIndex.value = 0
+}
 </script>
 <style lang="less" scoped>
 .bgimg {
@@ -252,7 +266,7 @@ const lyric = computed(() => {
     flex-direction: column;
     align-items: center;
     margin-top: 0.2rem;
-    overflow: scroll;
+    overflow: hidden;
 
     p {
         color: rgb(58, 55, 55);
@@ -261,7 +275,7 @@ const lyric = computed(() => {
 
     .active {
         color: #fff;
-        font-size: 0.5rem;
+        font-size: 0.3rem;
     }
 }
 

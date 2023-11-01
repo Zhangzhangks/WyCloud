@@ -27,11 +27,11 @@
     </van-popup>
 </template>
 <script setup>
-import { ref, reactive, onMounted, toRefs, watch, watchEffect } from "vue";
+import { ref, watch, watchEffect } from "vue";
 import { useAlertsStore } from "../../Store/itemList";
 import { storeToRefs } from "pinia";
 import MusciDetail from './MusciDetail.vue'
-const { playList, Musciid, playListIndex, isBofang, detailShow, currentTime } = storeToRefs(
+const { playList, Musciid, playListIndex, isBofang, detailShow, currentTime, duration } = storeToRefs(
     useAlertsStore()
 );
 const { getGeCiValue } = useAlertsStore();
@@ -41,14 +41,14 @@ const audioRef = ref("");
 const playAudio = function () {
     isBofang.value = !isBofang.value;
     if (!isBofang.value) {
-
         audioRef.value.play();
         updateTime()
     } else {
         audioRef.value.pause();
         clearInterval(timer)
     }
-
+    console.log([audioRef.value]);
+    duration.value = audioRef.value.duration;
 };
 const updateDetailShow = function () {
     detailShow.value = !detailShow.value
@@ -61,8 +61,10 @@ let timer = null
 function updateTime() {
     timer = setInterval(() => {
         currentTime.value = audioRef.value.currentTime
+
     }, 1000)
 }
+
 
 
 
@@ -81,13 +83,13 @@ watch(
                 isBofang.value = true
             }
         }
+        Musciid.value = playList.value[playListIndex.value].id
         if (Musciid.value) {
             getGeCiValue(Musciid.value);
         }
-        updateTime()
+        updateTime();
+        duration.value = audioRef.value.duration;
     }
-
-
 );
 watchEffect(() => {
 

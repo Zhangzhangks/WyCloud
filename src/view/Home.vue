@@ -12,4 +12,8 @@ import iconList from "..//components/home/iconList.vue";
 import MusicList from '../components/home/MusicList.vue'
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+* {
+  overflow: hidden;
+}
+</style>

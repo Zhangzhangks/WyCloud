@@ -35,3 +35,8 @@ export const getMusicDetailList = (playload) => {
 export const getGeci = (playload) => {
     return request(`/lyric`, 'get', playload)
 }
+
+// 搜索歌手
+export const searchLyric = (playload) => {
+    return request(`/search`, 'get', playload)
+}

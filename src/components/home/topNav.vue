@@ -9,13 +9,14 @@
       <span>云村</span>
       <span>视频</span>
     </div>
-    <svg class="icon" aria-hidden="true">
+    <svg class="icon" aria-hidden="true" @click="router.push('/search')">
       <use xlink:href="#icon-sousuo"></use>
     </svg>
   </div>
 </template>
 <script setup>
 import { ref, reactive } from "vue";
+import router from "../../router/router";
 </script>
 <style lang="less" scoped>
 .main {
